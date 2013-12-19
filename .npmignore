@@ -1,0 +1,10 @@
+dist/
+crop.jpg
+node_modules/
+resize.jpg
+src-pp/
+Gruntfile.js
+test.jpg
+test.js
+.gitignore
+.git

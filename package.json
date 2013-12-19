@@ -1,0 +1,40 @@
+{
+  "name": "img-canvas-helper",
+  "version": "0.0.1",
+  "description": "Render an image with modified dimensions and/or cropping using node canvas module (requires Cairo)",
+  "homepage": "https://github.com/willmark/img-canvas-helper",
+  "author": {
+    "name": "Mark Williams",
+    "email": "mark@togglebit.org",
+    "url": "http://togglebit.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/willmark/img-canvas-helper.git"
+  },
+  "scripts": {
+    "test": "node test.js"
+  },
+  "engine": {
+    "node": "0"
+  },
+  "dependencies": {
+    "vargs": "~0.1.0",
+    "canvas": "~1.1.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-preprocess": "~3.0.1",
+    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-jshint": "~0.7.2",
+    "grunt-contrib-nodeunit": "~0.2.2"
+  },
+  "keywords": [
+    "image",
+    "render",
+    "canvas",
+    "node canvas",
+    "image manipulation"
+  ],
+  "readmeFilename": "README.md"
+}
