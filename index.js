@@ -51,8 +51,8 @@ function checkCommonArgs(args) {
 /**
  * Crops an image to bounds specified by width and height
  * imgsrc - string path to image to crop
- * width - number width of cropped image
- * height - number height of cropped image
+ * width - integer width of cropped image
+ * height - integer height of cropped image
  * callback - callback function(
  *     result - boolean true on success
  *     data - canvas object on success, Error on failure

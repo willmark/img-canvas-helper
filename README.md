@@ -12,7 +12,8 @@ resize(img, maxdim, function(result, data))
 
 Resizes an image where longest dimension is within maxdim
  * imgsrc - string path to image to crop
- * maxdim - number length of longest dimension for resized image 
+ * width - integer length of longest width dimension for resized image 
+ * height - integer length of longest height dimension for resized image 
  * callback - callback function(
  *     result - boolean true on success
  *     data - canvas object on success, Error on failure
@@ -24,8 +25,8 @@ crop(img, maxw, maxh, function(result, data))
 
 Crops an image to bounds specified by maxw and maxh
  * imgsrc - string path to image to crop
- * maxw - number width of cropped image
- * maxh - number height of cropped image
+ * width - integer width of cropped image
+ * height - integer height of cropped image
  * callback - callback function(
  *     result - boolean true on success
  *     data - canvas object on success, Error on failure
