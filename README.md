@@ -64,8 +64,8 @@ Transform stream from input image to modified output image
  *         options = {
  *           img:  <required string path to source image>,
  *           method: <required string conversion method ('resize' | 'crop' currently supported)>,
- *           width: <optional integer width of destination image>
- *           height: <optional integer height of destination image>
+ *           width: <required integer width of destination image>
+ *           height: <required integer height of destination image>
  *         }
  */
 ````

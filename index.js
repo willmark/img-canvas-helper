@@ -136,8 +136,8 @@ var Transform = stream.Transform;
  *         options = {
  *           img:  <required string path to source image>,
  *           method: <required string conversion method ('resize' | 'crop' currently supported)>,
- *           width: <optional integer width of destination image>
- *           height: <optional integer height of destination image>
+ *           width: <required integer width of destination image>
+ *           height: <required integer height of destination image>
  *         }
  */
 var Convert = function(options) {
