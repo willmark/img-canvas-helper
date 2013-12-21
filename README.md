@@ -42,5 +42,29 @@ Helper to write canvas to an output jpeg file
  * callback - function (result, data)
  *    result - boolean result true on successful write
  *    data - bytes written on success, or Error on failure
+````
 
+````
+Convert(options);
+
+Transform stream from input image to modified output image
+ * usage:  var Convert = require('img-canvas-helper').Convert;
+ *         var imgc = new Convert(options);
+ *         imgc.on('data', function (chunk) {
+ *            //handle tranformed image data chunk
+ *         });
+ *         imgc.on('end', function () {
+ *            //close any open write streams
+ *         });
+ *         imgc.on('error', function (err) {
+ *            //handle errors
+ *         });
+ * where:
+ *         options = {
+ *           img:  <required string path to source image>,
+ *           method: <required string conversion method ('resize' | 'crop' currently supported)>,
+ *           width: <optional integer width of destination image>
+ *           height: <optional integer height of destination image>
+ *         }
+ */
 ````

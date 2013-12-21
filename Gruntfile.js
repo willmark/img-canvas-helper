@@ -27,9 +27,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks("grunt-contrib-jshint");
     grunt.loadNpmTasks("grunt-contrib-nodeunit");
     grunt.loadNpmTasks("grunt-preprocess");
-    grunt.registerTask("default", [ "jshint", "tests", "preprocess", "uglify" ]);
-    grunt.registerTask([ "tests" ], "Unit testing", function() {
-        grunt.file.write("file1", "contents of file1");
-        grunt.task.run("nodeunit");
-    });
+    grunt.registerTask("default", [ "jshint", "nodeunit", "preprocess", "uglify" ]);
 };
