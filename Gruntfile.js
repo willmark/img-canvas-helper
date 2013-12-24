@@ -19,7 +19,7 @@ module.exports = function(grunt) {
             },
             build: {
                 src: "src-pp/**.js",
-                dest: "dist/file-compare.min.js"
+                dest: "dist/<%= pkg.name %>.min.js"
             }
         }
     });
