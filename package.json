@@ -1,6 +1,6 @@
 {
   "name": "img-canvas-helper",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Render an image with modified dimensions and/or cropping using node canvas module (requires Cairo)",
   "homepage": "https://github.com/willmark/img-canvas-helper",
   "author": {

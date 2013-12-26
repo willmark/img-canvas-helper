@@ -3,7 +3,7 @@ var Canvas = require("canvas");
 var Args = require("vargs").Constructor;
 
 /**
- * Resizes an image where longest dimension is within maxdim
+ * Resizes an image where longest dimension is the shortest of width/height 
  * imgsrc - string path to image to crop
  * width - integer length of longest width dimension for resized image 
  * height - integer length of longest height dimension for resized image 
@@ -11,7 +11,7 @@ var Args = require("vargs").Constructor;
  *     result - boolean true on success
  *     data - canvas object on success, Error on failure
  */
-exports.resize = function(imgsrc, width, height, callback) {
+var resize = function(imgsrc, width, height, callback) {
     var args = new Args(arguments);
     checkCommonArgs(args);
 
@@ -34,7 +34,11 @@ exports.resize = function(imgsrc, width, height, callback) {
         ctx.drawImage(img, 0, 0);
         callback(true, canvas);
     };
-    img.src = imgsrc;
+    if (!isValidFile(imgsrc)) {
+        callback(false, new Error (imgsrc + ' is not a valid file'));
+    } else {
+        img.src = imgsrc;
+    }
 };
 
 /**
@@ -49,6 +53,53 @@ function checkCommonArgs(args) {
 }
 
 /**
+ * First, resizes image where shortest side is largest
+ * of width or height. Then, Crops an image to bounds 
+ * specified by width and height.
+ * imgsrc - string path to image to crop
+ * width - integer width of cropped image
+ * height - integer height of cropped image
+ * callback - callback function(
+ *     result - boolean true on success
+ *     data - canvas object on success, Error on failure
+ */
+var thumb = function (imgsrc, width, height, callback) {
+    
+    var args = new Args(arguments);
+    checkCommonArgs(args);
+
+    var Image = Canvas.Image, fs = require("fs");
+    var img = new Image();
+    img.onerror = function(err) {
+        callback(false, err);
+    };
+    img.onload = function() {
+        ratio = Math.max(
+            Math.min(img.width, width) / Math.max(img.width, width),
+            Math.min(img.height, height) / Math.max(img.height, height)
+        );
+
+        var w = Math.round(ratio * img.width, 0);
+        var h = Math.round(ratio * img.height, 0);
+
+        //compute cropping placement within new scaled image w/h dims
+        var newx = Math.abs(w / 2 - width / 2);
+        var newy = Math.abs(h / 2 - height / 2);
+
+        var canvas = new Canvas(width, height);
+        var ctx = canvas.getContext("2d");
+        ctx.scale(ratio, ratio);
+        ctx.drawImage(img, 0, 0);
+        callback(true, canvas);
+    };
+    if (!isValidFile(imgsrc)) {
+        callback(false, new Error (imgsrc + ' is not a valid file'));
+    } else {
+        img.src = imgsrc;
+    }
+};
+
+/**
  * Crops an image to bounds specified by width and height
  * imgsrc - string path to image to crop
  * width - integer width of cropped image
@@ -57,16 +108,10 @@ function checkCommonArgs(args) {
  *     result - boolean true on success
  *     data - canvas object on success, Error on failure
  */
-exports.crop = function(imgsrc, width, height, callback) {
+var crop = function (imgsrc, width, height, callback) {
     var args = new Args(arguments);
     checkCommonArgs(args);
-/*
-    if (args.length < 3) throw new Error("imgsrc, width, height, and maxdim required");
-    if (typeof args.at(2) != "number") throw new Error("height required int parameter");
-    if (typeof args.at(1) != "number") throw new Error("width required int parameter");
-    if (typeof args.first !== "string") throw new Error("imgsrc required string parameter");
-    if (!args.callbackGiven()) throw new Error("Callback required");
-*/
+
     var Image = Canvas.Image, fs = require("fs");
     var img = new Image();
     img.onerror = function(err) {
@@ -82,7 +127,11 @@ exports.crop = function(imgsrc, width, height, callback) {
         ctx.drawImage(img, newx, newy, width, height, 0, 0, width, height);
         callback(true, canvas);
     };
-    img.src = imgsrc;
+    if (!isValidFile(imgsrc)) {
+        callback(false, new Error (imgsrc + ' is not a valid file'));
+    } else {
+        img.src = imgsrc;
+    }
 };
 
 /**
@@ -94,7 +143,7 @@ exports.crop = function(imgsrc, width, height, callback) {
  *    result - boolean result true on successful write
  *    data - bytes written on success, or Error on failure
  */
-exports.writeCanvas = function(canvas, outfile, callback) {
+var writeCanvas = function(canvas, outfile, callback) {
     var fs = require("fs");
     var out = fs.createWriteStream(outfile);
     out.on("finish", function() {
@@ -114,6 +163,15 @@ exports.writeCanvas = function(canvas, outfile, callback) {
         out.end();
     });
 };
+
+function isValidFile(file) {
+    try {
+        var stat = require('fs').statSync(file);
+        if (stat) return stat.isFile();
+    } catch (err) {
+        return false;
+    }
+}
 
 var stream = require("stream");
 var fs = require("fs");
@@ -158,10 +216,13 @@ Convert.prototype._init = function() {
     var self = this;
     function cb(result, data) {
         if (!result) {
-            self.emit("error", data);
+            throw data;//expect call to handle exception
         } else {
             self.reader = data.jpegStream();
             self.reader.pipe(self);
+            self.reader.on("error", function(err) {
+                throw err;
+            });
             self.reader.on("end", function() {
                 self.push(null);
             });
@@ -169,11 +230,15 @@ Convert.prototype._init = function() {
     }
     switch (this.options.method) {
       case "resize":
-        exports.resize(this.options.img, this.options.width, this.options.height, cb);
+        resize(this.options.img, this.options.width, this.options.height, cb);
         break;
 
       case "crop":
-        exports.crop(this.options.img, this.options.width, this.options.height, cb);
+        crop(this.options.img, this.options.width, this.options.height, cb);
+        break;
+
+      case "thumb":
+        thumb(this.options.img, this.options.width, this.options.height, cb);
         break;
 
       default:
@@ -186,4 +251,9 @@ Convert.prototype._transform = function(chunk, encoding, done) {
     done();
 };
 
-exports.Convert = Convert;
+module.exports = {
+    Convert: Convert,
+    resize: resize,
+    crop: crop,
+    thumb: thumb
+};

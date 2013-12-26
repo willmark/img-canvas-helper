@@ -52,6 +52,19 @@ exports.resizeImageMissingMaxDim = function(a) {
     a.done();
 };
 
+exports.badSourceFile = function(a) {
+    a.expect(1);
+    a.throws(function () {
+       ic = new Convert({
+        img: "testnone.jpg",
+        method: "crop",
+        width: 300,
+        height: 300
+       });
+    });
+    a.done();
+};
+
 exports.conversionTransformResize = function(a) {
     a.expect(1);
     fs = require("fs");
@@ -85,7 +98,6 @@ exports.conversionTransformCrop = function(a) {
         height: 300
     });
     ic.on("data", function(chunk) {
-        console.log('writing chunk ' + chunk.length);
         ws.write(chunk);
     });
     ic.on("end", function() {
